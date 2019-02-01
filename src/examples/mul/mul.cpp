@@ -89,10 +89,14 @@ int32_t test_mul_circuit(e_role role, const std::string& address, uint16_t port,
 	uint16_t x, y;
 
 	uint16_t output, v_sum = 0;
+//	uint64_t x, y;
+//	uint64_t output, v_sum = 0;
 
 	std::vector<uint16_t> xvals(num);
 	std::vector<uint16_t> yvals(num);
 
+//	std::vector<uint64_t> xvals(num);
+//	std::vector<uint64_t> yvals(num);
 	uint32_t i;
 	srand(time(NULL));
 
@@ -119,6 +123,8 @@ int32_t test_mul_circuit(e_role role, const std::string& address, uint16_t port,
 
 	s_x_vec = circ->PutSIMDINGate(num, xvals.data(), 16, SERVER);
 	s_y_vec = circ->PutSIMDINGate(num, yvals.data(), 16, CLIENT);
+//	s_x_vec = circ->PutSIMDINGate(num, xvals.data(), 64, SERVER);
+//	s_y_vec = circ->PutSIMDINGate(num, yvals.data(), 64, CLIENT);
 
 	/**
 	 Step 7: Call the build method for building the circuit for the
@@ -131,7 +137,7 @@ int32_t test_mul_circuit(e_role role, const std::string& address, uint16_t port,
 	/**
 	 Step 8: Output the value of s_out (the computation result) to both parties
 	 */
-	s_out = circ->PutOUTGate(s_out, ALL);
+//	s_out = circ->PutOUTGate(s_out, ALL);
 
 	/**
 	 Step 9: Executing the circuit using the ABYParty object evaluate the
@@ -142,9 +148,9 @@ int32_t test_mul_circuit(e_role role, const std::string& address, uint16_t port,
 	/**
 	 Step 10: Type caste the plaintext output to 16 bit unsigned integer.
 	 */
-	output = s_out->get_clear_value<uint16_t>();
+//	output = s_out->get_clear_value<uint16_t>();
 
-	std::cout << "\nCircuit Result: " << output;
+//	std::cout << "\nCircuit Result: " << output;
 	std::cout << "\nVerification Result: " << v_sum << std::endl;
 
 	delete s_x_vec;
@@ -192,7 +198,7 @@ int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
 int main(int argc, char** argv) {
 
 	e_role role;
-	uint32_t bitlen = 16, nvals = 128, secparam = 128, nthreads = 1;
+	uint32_t bitlen = 16, nvals = 1, secparam = 128, nthreads = 1;
 	uint16_t port = 7766;
 	std::string address = "127.0.0.1";
 	int32_t test_op = -1;
@@ -203,7 +209,7 @@ int main(int argc, char** argv) {
 	seclvl seclvl = get_sec_lvl(secparam);
 
 	// call inner product routine. set size with cmd-parameter -n <size>
-	test_inner_product_circuit(role, address, port, seclvl, 1, 16, nthreads, mt_alg, S_ARITH, nvals);
+	test_mul_circuit(role, address, port, seclvl, 1, bitlen, nthreads, mt_alg, S_ARITH, nvals);
 
 	return 0;
 }
